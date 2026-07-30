@@ -1,6 +1,7 @@
 use crate::plugins::{
     collisions::CollisionMessageReader, input::InputEventReader, scene_tree::SceneTreeMessageReader,
 };
+use crate::utils::scene_tree_root;
 use crate::watchers::collision_watcher::CollisionWatcher;
 use crate::watchers::input_watcher::GodotInputWatcher;
 use crate::watchers::scene_tree_watcher::SceneTreeWatcher;
@@ -111,12 +112,11 @@ impl BevyApp {
     /// Resolves the `/root/BevyAppSingleton` autoload — `None` in the editor or
     /// before the autoload exists.
     pub fn try_singleton() -> Option<Gd<BevyApp>> {
-        godot::classes::Engine::singleton()
+        let scene_tree = godot::classes::Engine::singleton()
             .get_main_loop()?
             .try_cast::<godot::classes::SceneTree>()
-            .ok()?
-            .get_root()?
-            .try_get_node_as::<BevyApp>("BevyAppSingleton")
+            .ok()?;
+        scene_tree_root(&scene_tree)?.try_get_node_as::<BevyApp>("BevyAppSingleton")
     }
 
     /// Enqueue a typed event into this app's ECS, delivered to `On<T>` observers

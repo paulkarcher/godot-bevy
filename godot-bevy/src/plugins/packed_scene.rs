@@ -6,6 +6,7 @@ use crate::plugins::signals::{
 };
 use crate::plugins::transforms::IntoGodotTransform;
 use crate::plugins::transforms::IntoGodotTransform2D;
+use crate::utils::scene_tree_root;
 use bevy_app::{App, Plugin, PostUpdate};
 use bevy_asset::{Assets, Handle};
 use bevy_ecs::event::Event;
@@ -236,7 +237,9 @@ fn spawn_scene(
                 parent.add_child(&instance);
             }
             None => {
-                scene_tree.get().get_root().unwrap().add_child(&instance);
+                scene_tree_root(&scene_tree.get())
+                    .unwrap()
+                    .add_child(&instance);
             }
         }
 

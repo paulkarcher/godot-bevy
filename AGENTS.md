@@ -25,7 +25,7 @@ Everything runs inside `devenv shell -- <cmd>` (direnv usually activates the env
 
 `cargo fmt` is enforced by a pre-commit hook; clippy runs in CI (`ci.yml`: fmt, clippy, unit tests on three OSes, integration tests). Example builds and Godot exports run in `examples.yml`.
 
-Never use `--all-features`: the `api-4-2`..`api-4-5` features are mutually exclusive gdext API-level selectors, and `experimental-wasm` conflicts with `experimental-threads`.
+Never use `--all-features`: the `api-4-2`..`api-4-7` features are mutually exclusive gdext API-level selectors, and `experimental-wasm` conflicts with `experimental-threads`.
 
 ## Workspace Map
 

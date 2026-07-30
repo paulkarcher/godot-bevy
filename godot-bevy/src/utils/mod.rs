@@ -12,3 +12,24 @@ pub use math::{clamp_to_range, is_reasonable_float, lerp, move_toward, normalize
 
 // Re-export debug functions
 pub use debug::{print_scene_tree, print_tree_structure};
+
+/// get_root() is Option<Gd<Window>> below api 4.7, Gd<Window> from 4.7 —
+/// the inner trait normalizes both to Option.
+pub fn scene_tree_root(
+    tree: &godot::classes::SceneTree,
+) -> Option<godot::obj::Gd<godot::classes::Window>> {
+    trait NormalizeRoot {
+        fn normalize(self) -> Option<godot::obj::Gd<godot::classes::Window>>;
+    }
+    impl NormalizeRoot for godot::obj::Gd<godot::classes::Window> {
+        fn normalize(self) -> Option<godot::obj::Gd<godot::classes::Window>> {
+            Some(self)
+        }
+    }
+    impl NormalizeRoot for Option<godot::obj::Gd<godot::classes::Window>> {
+        fn normalize(self) -> Option<godot::obj::Gd<godot::classes::Window>> {
+            self
+        }
+    }
+    tree.get_root().normalize()
+}

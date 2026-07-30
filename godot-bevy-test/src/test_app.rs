@@ -18,6 +18,7 @@
 
 use bevy::prelude::*;
 use godot::obj::{Gd, NewAlloc};
+use godot_bevy::utils::scene_tree_root;
 
 use crate::{TestContext, await_frame};
 
@@ -81,7 +82,7 @@ impl TestApp {
         await_frame().await; // Wait for any previous test cleanup
 
         let scene_tree = ctx.scene_tree.get_tree();
-        let root = scene_tree.get_root().expect("Root should exist");
+        let root = scene_tree_root(&scene_tree).expect("Root should exist");
         let mut bevy_app = root
             .try_get_node_as::<godot_bevy::BevyApp>("BevyAppSingleton")
             .expect("BevyAppSingleton autoload not found. Enable the godot-bevy plugin in Project Settings > Plugins, or add BevyAppSingleton as an autoload.");
