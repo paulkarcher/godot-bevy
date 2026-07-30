@@ -1,5 +1,7 @@
 use thiserror::Error;
 
+use crate::utils::scene_tree_root;
+
 #[non_exhaustive]
 #[derive(Debug, Error)]
 pub enum NodeTreeViewError {
@@ -33,7 +35,7 @@ pub fn find_node_by_pattern(
     let (search_root, pattern_parts) = if let Some(stripped) = pattern.strip_prefix('/') {
         // Absolute path - start from scene tree root
         let scene_tree = base_node.get_tree();
-        let root = scene_tree.get_root()?;
+        let root = scene_tree_root(&scene_tree)?;
         let root_as_node = root.upcast::<godot::classes::Node>();
         let mut parts: Vec<&str> = stripped.split('/').filter(|s| !s.is_empty()).collect();
 

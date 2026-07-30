@@ -9,6 +9,7 @@ use crate::plugins::audio::{
     AudioSettings, ChannelId, ChannelState, MainAudioTrack, PlayCommand, SoundId, TweenType,
 };
 use crate::plugins::scene_tree::SceneTreeRef;
+use crate::utils::scene_tree_root;
 use bevy_app::{App, Plugin, Update};
 use bevy_asset::Assets;
 use bevy_ecs::prelude::Resource;
@@ -393,7 +394,7 @@ fn process_play_command(
     };
 
     if let Some(handle) = player_handle {
-        if let Some(mut root) = scene_tree.get().get_root() {
+        if let Some(mut root) = scene_tree_root(&scene_tree.get()) {
             // Get the node from the handle and add it to the scene tree
             let node = godot.get::<godot::classes::Node>(handle);
             root.add_child(&node);
