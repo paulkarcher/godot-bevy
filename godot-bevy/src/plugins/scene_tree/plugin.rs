@@ -851,9 +851,19 @@ fn create_scene_tree_entity(
             }
             SceneTreeMessageType::NodeRenamed => {
                 if let Some(ent) = existing_entity {
-                    let name = node_name
-                        .unwrap_or_else(|| godot.get::<Node>(node_handle).get_name().to_string());
-                    commands.entity(ent).insert(Name::from(name));
+                    // We need to try_get because the node handle might be invalid if the
+                    // node was freed after the rename was queued; skip the rename in that
+                    // case -- the node's own NodeRemoved message despawns the entity.
+                    let name = node_name.or_else(|| {
+                        godot
+                            .try_get::<Node>(node_handle)
+                            .map(|godot_node| godot_node.get_name().to_string())
+                    });
+                    if let Some(name) = name {
+                        commands.entity(ent).insert(Name::from(name));
+                    } else {
+                        trace!(target: "godot_scene_tree_messages", "Renamed node was already freed, skipping rename");
+                    }
                 } else {
                     trace!(target: "godot_scene_tree_messages", "Entity for renamed node was already despawned");
                 }
